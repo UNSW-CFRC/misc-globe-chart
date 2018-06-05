@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>ourAir</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="css/main.css">
+</head>
+
+<body onload="javascript: get_data()">
+  <script src="js/aqi_24h-DoL.js"></script>
+  <div id="cesiumContainer" class="halfScreen"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/webpack-cesium/1.37.0/webpack.cesium.js"></script>
+  <script>
+    window.CESIUM_BASE_URL = '/';
+    Cesium.BingMapsApi.defaultKey = 'AmgvfT0YwUf5nKyZE85SDRx9PaygJr-X_oHMeCH2Hv-7KTrNB7bEEmjK5xHMShb8';
+
+    var chartData = {
+      labels: [],
+      datasets: []
+    };
+
+    var extent = Cesium.Rectangle.fromDegrees(140, -37, 154, -28);
+    Cesium.Camera.DEFAULT_VIEW_RECTANGLE = extent;
+
+    viewer = new Cesium.Viewer('cesiumContainer', {
+      timeline: false,
+      animation: false,
+      sceneModePicker: false,
+      baseLayerPicker: false
+    });
+
+    function get_data() {
+      var data_api_url = 'https://n4bdz03lib.execute-api.ap-southeast-2.amazonaws.com/Test/get_aqi_data';
+      var colorRange = [
+        {"max": 33, "label": "VERY GOOD", "color": new Cesium.Color(0.192, 0.678, 0.827, 0.5)},
+        {"max": 66, "label": "GOOD", "color": new Cesium.Color(0.6, 0.725, 0.392, 0.5)},
+        {"max": 99, "label": "FAIR", "color": new Cesium.Color(1, 0.824, 0.212, 0.5)},
+        {"max": 149, "label": "POOR", "color": new Cesium.Color(0.925, 0.471, 0.227, 0.5)},
+        {"max": 199, "label": "VERY POOR", "color": new Cesium.Color(0.471, 0.176, 0.286, 0.5)},
+        {"label": "HAZARDOUS", "color": new Cesium.Color(0.816, 0.278, 0.188, 0.5)}
+      ];
+
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          data = JSON.parse(this.responseText);
+          ts = data.ts;
+
+          for (var i = 0; i < ts.Datetime.length; i++) {
+              var d = new Date(ts.Datetime[i]);
+              h = d.getHours();
+              chartData.labels[i] = h;
+          }
+          var hue = 90;
+          var hueStep = 70;
+
+          for (var site in ts) {
+              if (ts.hasOwnProperty(site) && ["index", "Datetime"].indexOf(site) == -1) {
+                  var ds = {
+                    label: "",
+                    data: [],
+                    backgroundColor: ""
+                  };
+                  ds.label = site;
+                  ds.data = ts[site];
+                  ds.backgroundColor = "hsl(" + hue + ", 100%, 60%)";
+
+                  chartData.datasets.push(ds);
+                  hue = (hue + hueStep) % 360;
+              }
+          }
+
+          var ctx = document.getElementById('myChart').getContext('2d');
+          var myChart = new Chart(ctx, {
+            type: 'line',
+            data: chartData,
+            options: {
+              legend: {
+                display: false
+              }
+            },
+          });
+
+          var promise = Cesium.GeoJsonDataSource.load(data.sites, {
+            markerColor: Cesium.Color.DARKGREY,
+            markerSize: 25
+          });
+          promise.then(function(dataSource) {
+            viewer.dataSources.add(dataSource);
+            var entities = dataSource.entities.values;
+            for (var i = 0; i < entities.length; i++) {
+              var entity = entities[i];
+              if (entity.properties.AQI.getValue(viewer.clock.currentTime)) {
+                var j = 0;
+                while (j < colorRange.length - 1) {
+                  if (entity.properties.AQI.getValue(viewer.clock.currentTime) <= colorRange[j].max) {
+                    break
+                  };
+                  j++
+                }
+                entity.billboard.color = colorRange[j].color;
+              } else {
+                entity.billboard.color = Cesium.Color.DARKGREY;
+              }
+
+              entity.label = {
+                text: String(entity.properties.Name.getValue(viewer.clock.currentTime)),
+                font: '12pt sans-serif',
+                fillColor: Cesium.Color.ALICEBLUE,
+                style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+                outlineWidth: 2,
+                verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                pixelOffset: new Cesium.Cartesian2(0, -9)
+              };
+              // viewer.zoomTo(dataSource);
+            };
+          });
+        }
+      };
+      xhttp.open("GET", data_api_url, true);
+      xhttp.send();
+    }
+  </script>
+
+  <div class="halfScreen">
+    <canvas id="myChart"></canvas>
+  </div>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.2/Chart.min.js'></script>
+  <!-- <script src="js/chart.js"></script> -->
+  <!-- <script src="js/chart_applesOranges.js"></script> -->
+</body>
+
+</html>
