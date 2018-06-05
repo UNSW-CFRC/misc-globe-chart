@@ -6,6 +6,7 @@
   <title>ourAir</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" type="text/css" href="css/main.css">
+  <script src='js/config.js'></script>
 </head>
 
 <body>
@@ -52,6 +53,12 @@
       var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
+
+          viewer.scene.camera.setView({
+            destination: camera.position,
+            orientation: camera
+          });
+
           data = JSON.parse(this.responseText);
           ts = data.ts;
 
