@@ -1,5 +1,10 @@
+body {
+  background-color: black;
+}
+
 div.halfScreen {
   border: 1px solid  black;
   height: 49%;
   width: 98%;
+  background-color: black;
 }
