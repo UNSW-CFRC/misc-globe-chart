@@ -65,7 +65,7 @@
                   };
                   ds.label = site;
                   ds.data = ts[site];
-                  ds.backgroundColor = "hsl(" + hue + ", 100%, 60%)";
+                  ds.backgroundColor = "hsla(" + hue + ", 100%, 60%, 0.5)";
 
                   chartData.datasets.push(ds);
                   hue = (hue + hueStep) % 360;
