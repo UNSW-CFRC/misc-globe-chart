@@ -3,11 +3,8 @@ body {
 }
 
 div.halfScreen {
-  border: 1px solid black;
   height: 49%;
   width: 98%;
-  background-color: black;
-  position: relative;
 }
 
 /* @media screen and (orientation: portrait) {
