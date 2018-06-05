@@ -56,29 +56,30 @@
           ts = data.ts;
 
           for (var i = 0; i < ts.Datetime.length; i++) {
-              var d = new Date(ts.Datetime[i]);
-              h = d.getHours();
-              chartData.labels[i] = h;
+            var d = new Date(ts.Datetime[i]);
+            h = d.getHours();
+            chartData.labels[i] = h;
           }
           var hue = 90;
           var hueStep = 70;
 
           for (var site in ts) {
-              if (ts.hasOwnProperty(site) && ["index", "Datetime"].indexOf(site) == -1) {
-                  var ds = {
-                    label: "",
-                    data: [],
-                    backgroundColor: ""
-                  };
-                  ds.label = site;
-                  ds.data = ts[site];
-                  ds.backgroundColor = "hsla(" + hue + ", 100%, 60%, 0.5)";
+            if (ts.hasOwnProperty(site) && ["index", "Datetime"].indexOf(site) == -1) {
+              var ds = {
+                label: "",
+                data: [],
+                backgroundColor: ""
+              };
+              ds.label = site;
+              ds.data = ts[site];
+              ds.backgroundColor = "hsla(" + hue + ", 100%, 60%, 0.5)";
 
-                  chartData.datasets.push(ds);
-                  hue = (hue + hueStep) % 360;
-              }
+              chartData.datasets.push(ds);
+              hue = (hue + hueStep) % 360;
+            }
           }
 
+          document.getElementsByClassName('pleaseWait')[0].classList.add("noMore");
           var ctx = document.getElementById('myChart').getContext('2d');
           var myChart = new Chart(ctx, {
             type: 'line',
