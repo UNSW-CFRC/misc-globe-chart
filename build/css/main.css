@@ -10,6 +10,20 @@ div.halfScreen {
   position: relative;
 }
 
+/* @media screen and (orientation: portrait) {
+  div.halfScreen {
+    height: 49%;
+    width: 98%;
+    clear: both;
+}
+
+@media screen and (orientation: landscape) {
+  div.halfScreen {
+    height: 98%;
+    width: 49%;
+    float: left;
+} */
+
 .pleaseWait {
   color: hsla(0, 0%, 100%, 0.5);
   font-family: sans-serif;
