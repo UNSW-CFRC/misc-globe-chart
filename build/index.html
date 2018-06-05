@@ -8,29 +8,37 @@
   <link rel="stylesheet" type="text/css" href="css/main.css">
 </head>
 
-<body onload="javascript: get_data()">
+<body>
   <div id="cesiumContainer" class="halfScreen"></div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/webpack-cesium/1.37.0/webpack.cesium.js"></script>
   <script>
-    window.CESIUM_BASE_URL = '/';
-    Cesium.BingMapsApi.defaultKey = 'AmgvfT0YwUf5nKyZE85SDRx9PaygJr-X_oHMeCH2Hv-7KTrNB7bEEmjK5xHMShb8';
-
     var chartData = {
       labels: [],
       datasets: []
     };
 
-    var extent = Cesium.Rectangle.fromDegrees(140, -37, 154, -28);
-    Cesium.Camera.DEFAULT_VIEW_RECTANGLE = extent;
+    var viewer = {};
 
-    viewer = new Cesium.Viewer('cesiumContainer', {
-      timeline: false,
-      animation: false,
-      sceneModePicker: false,
-      baseLayerPicker: false
-    });
+    getGlobe();
+    getData();
 
-    function get_data() {
+    function getGlobe() {
+
+      window.CESIUM_BASE_URL = '/';
+      Cesium.BingMapsApi.defaultKey = 'AmgvfT0YwUf5nKyZE85SDRx9PaygJr-X_oHMeCH2Hv-7KTrNB7bEEmjK5xHMShb8';
+
+      var extent = Cesium.Rectangle.fromDegrees(140, -37, 154, -28);
+      Cesium.Camera.DEFAULT_VIEW_RECTANGLE = extent;
+
+      viewer = new Cesium.Viewer('cesiumContainer', {
+        timeline: false,
+        animation: false,
+        sceneModePicker: false,
+        baseLayerPicker: false
+      });
+    };
+
+    function getData() {
       var data_api_url = 'https://n4bdz03lib.execute-api.ap-southeast-2.amazonaws.com/Test/get_aqi_data';
       var colorRange = [
         {"max": 33, "label": "VERY GOOD", "color": new Cesium.Color(0.192, 0.678, 0.827, 0.5)},
