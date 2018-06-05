@@ -37,6 +37,15 @@
         sceneModePicker: false,
         baseLayerPicker: false
       });
+      var frame = viewer.infoBox.frame;
+
+      frame.addEventListener('load', function () {
+          var cssLink = frame.contentDocument.createElement('link');
+          cssLink.href = Cesium.buildModuleUrl('file:css/main.css');
+          cssLink.rel = 'stylesheet';
+          cssLink.type = 'text/css';
+          frame.contentDocument.head.appendChild(cssLink);
+      }, false);
     };
 
     function getData() {

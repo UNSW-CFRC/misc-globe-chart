@@ -25,6 +25,11 @@ div.halfScreen {
   width: 75%;
 }
 
+.cesium-infoBox-defaultTable {
+  color: white;
+  font-family: sans-serif;
+}
+
 .pleaseWait.noMore {
   opacity: 0;
 }
